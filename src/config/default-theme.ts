@@ -1,0 +1,90 @@
+import type { Theme } from './types';
+
+// The theme used when the config omits `theme`. An explicit theme replaces it
+// wholesale (no merging) — spread `defaultTheme` to extend it instead.
+//
+// Colors ship only a neutral palette; semantic colors are the user's to
+// define. Breakpoints have no zero-width tier — the base tier is never
+// written as a media query.
+export const defaultTheme = {
+  breakpoints: {
+    sm: '640px',
+    md: '768px',
+    lg: '1024px',
+    xl: '1280px',
+    xxl: '1536px',
+  },
+  colors: {
+    white: '#fff',
+    black: '#000',
+    'gray-50': '#fafafa',
+    'gray-100': '#f5f5f5',
+    'gray-200': '#e5e5e5',
+    'gray-300': '#d4d4d4',
+    'gray-400': '#a3a3a3',
+    'gray-500': '#737373',
+    'gray-600': '#525252',
+    'gray-700': '#404040',
+    'gray-800': '#262626',
+    'gray-900': '#171717',
+    'gray-950': '#0a0a0a',
+  },
+  space: {
+    2: '0.125rem',
+    4: '0.25rem',
+    8: '0.5rem',
+    12: '0.75rem',
+    16: '1rem',
+    20: '1.25rem',
+    24: '1.5rem',
+    32: '2rem',
+    40: '2.5rem',
+    48: '3rem',
+    56: '3.5rem',
+    64: '4rem',
+    72: '4.5rem',
+    80: '5rem',
+    96: '6rem',
+    128: '8rem',
+    160: '10rem',
+  },
+  size: {
+    8: '0.5rem',
+    12: '0.75rem',
+    16: '1rem',
+    20: '1.25rem',
+    24: '1.5rem',
+    32: '2rem',
+    36: '2.25rem',
+    40: '2.5rem',
+    48: '3rem',
+    56: '3.5rem',
+    64: '4rem',
+    72: '4.5rem',
+    80: '5rem',
+    96: '6rem',
+    128: '8rem',
+    160: '10rem',
+    192: '12rem',
+    256: '16rem',
+    320: '20rem',
+    384: '24rem',
+    448: '28rem',
+    512: '32rem',
+    576: '36rem',
+    640: '40rem',
+    768: '48rem',
+  },
+  radius: {
+    circle: '50%',
+    pill: '50rem',
+    4: '0.25rem',
+    6: '0.375rem',
+    8: '0.5rem',
+    10: '0.625rem',
+    12: '0.75rem',
+    16: '1rem',
+  },
+} as const satisfies Theme;
+
+export type DefaultTheme = typeof defaultTheme;

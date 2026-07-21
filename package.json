@@ -1,0 +1,88 @@
+{
+  "name": "@hsnaydd/xstyle",
+  "version": "0.0.1",
+  "description": "Config-driven style engine that converts typed style objects into atomic CSS classes.",
+  "license": "MIT",
+  "author": "Hasan Aydoğdu (https://github.com/hsnaydd)",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hsnaydd/xstyle.git"
+  },
+  "bugs": {
+    "url": "https://github.com/hsnaydd/xstyle/issues"
+  },
+  "homepage": "https://github.com/hsnaydd/xstyle#readme",
+  "keywords": [
+    "css",
+    "atomic-css",
+    "css-in-js",
+    "design-tokens",
+    "typescript",
+    "vite-plugin"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "sideEffects": false,
+  "type": "module",
+  "packageManager": "pnpm@10.18.3",
+  "engines": {
+    "node": ">=20.19"
+  },
+  "bin": {
+    "xstyle": "./bin/xstyle.mjs"
+  },
+  "main": "dist/index.cjs",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./vite": {
+      "types": "./dist/vite.d.ts",
+      "import": "./dist/vite.js",
+      "require": "./dist/vite.cjs"
+    }
+  },
+  "files": [
+    "dist",
+    "bin"
+  ],
+  "scripts": {
+    "lint:eslint": "eslint 'src/**/*.{ts,tsx}'",
+    "lint:ts": "tsc",
+    "lint": "pnpm lint:eslint && pnpm lint:ts",
+    "format": "pnpm format:ts",
+    "format:ts": "prettier --write 'src/**/*.{ts,tsx}' && pnpm lint:eslint --fix",
+    "format:check": "prettier -c 'src/**/*.{ts,tsx}'",
+    "test": "vitest run",
+    "build": "vite build",
+    "prepublishOnly": "pnpm build"
+  },
+  "devDependencies": {
+    "@atolye15/eslint-config": "^2.0.0",
+    "@microsoft/api-extractor": "^7.58.9",
+    "@types/node": "^26.1.1",
+    "eslint": "^9.39.1",
+    "prettier": "^3.9.4",
+    "typescript": "^5.9.3",
+    "unplugin-dts": "^1.0.3",
+    "vite": "^8.1.4",
+    "vitest": "^4.1.10"
+  },
+  "dependencies": {
+    "chokidar": "^5.0.0",
+    "jiti": "^2.7.0"
+  },
+  "peerDependencies": {
+    "vite": ">=6"
+  },
+  "peerDependenciesMeta": {
+    "vite": {
+      "optional": true
+    }
+  }
+}
