@@ -1,42 +1,89 @@
 name: Release
-
 on:
   push:
     branches:
       - main
   workflow_dispatch:
+    inputs:
+      tag:
+        description: >-
+          Existing release tag to stage on npm again, for example v0.1.0. Use
+          this when publishing failed for a release. Leave empty to run
+          release-please.
+        required: false
+        type: string
 
-permissions:
-  contents: write # to create release commit
-  issues: write # This is important for label creation
-  pull-requests: write # to create release PR
-  id-token: write # Required for Trusted Publishing
+permissions: {}
 
 jobs:
   release-please:
+    if: ${{ !inputs.tag }}
     runs-on: ubuntu-latest
+    permissions:
+      contents: write # to create release commit
+      issues: write # This is important for label creation
+      pull-requests: write # to create release PR
+    outputs:
+      release_created: ${{ steps.release.outputs.release_created }}
+      tag_name: ${{ steps.release.outputs.tag_name }}
     steps:
       - uses: googleapis/release-please-action@v4
         id: release
 
+  publish:
+    needs: release-please
+    # Runs for a new release, or for an existing tag given to workflow_dispatch.
+    if: >-
+      ${{ !failure() && !cancelled() &&
+      (needs.release-please.outputs.release_created == 'true' || inputs.tag) }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write # Required for Trusted Publishing
+    env:
+      TAG: ${{ inputs.tag || needs.release-please.outputs.tag_name }}
+    steps:
       - uses: actions/checkout@v6
-        if: ${{ steps.release.outputs.release_created }}
+        with:
+          ref: ${{ env.TAG }}
+          fetch-depth: 0
+
+      - name: Verify tag
+        run: |
+          if ! [[ "$TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "::error::Tag '$TAG' is not in the vX.Y.Z format."
+            exit 1
+          fi
+          if ! git merge-base --is-ancestor HEAD origin/main; then
+            echo "::error::Tag '$TAG' is not on the main branch."
+            exit 1
+          fi
+          VERSION="$(node -p "require('./package.json').version")"
+          if [ "v$VERSION" != "$TAG" ]; then
+            echo "::error::Tag '$TAG' does not match package.json version '$VERSION'."
+            exit 1
+          fi
 
       - uses: pnpm/action-setup@v6
-        if: ${{ steps.release.outputs.release_created }}
         with:
           cache: true
 
       - uses: actions/setup-node@v6
-        if: ${{ steps.release.outputs.release_created }}
         with:
           node-version: '24'
           registry-url: 'https://registry.npmjs.org'
 
       - name: Install dependencies
-        if: ${{ steps.release.outputs.release_created }}
         run: pnpm install --frozen-lockfile
 
-      - name: Publish
-        if: ${{ steps.release.outputs.release_created }}
-        run: npm publish --provenance --access public
+      - name: Run tests
+        run: pnpm test
+
+      - name: Build
+        run: pnpm build
+
+      # Stages the release on npm. It goes live only after a maintainer
+      # approves it with 2FA (npmjs.com "Staged Packages" tab or
+      # `npm stage approve <stage-id>`).
+      - name: Stage publish
+        run: npm stage publish --provenance
