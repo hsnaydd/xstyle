@@ -47,3 +47,11 @@ Type tests (`expectTypeOf` + `@ts-expect-error`) live in regular `*.test.ts` fil
 
 - After finishing a task run `pnpm lint`, `pnpm test`, and `pnpm build`, in that order (see the `verify` skill).
 - Commit with conventional commits via the `commit` skill. Never commit to `main` once the repo has a remote; until then, keeping the refactor history linear on `main` is fine.
+- Every change lands through a PR merged with a merge commit (no squash or rebase). PR titles are plain sentences without a conventional commit prefix: the merge commit message is the PR title and release-please reads it, so a `fix:` title would add the change to the changelog twice.
+
+## Releases
+
+- release-please opens a release PR from the conventional commits on `main`. Tags are `vX.Y.Z` (no package name). Below 1.0.0, breaking changes bump the minor version and features bump the patch version.
+- Merging the release PR tags the release, and `.github/workflows/release.yml` runs the tests and the build, then stages the version on npm with `npm stage publish --provenance`. It goes live only after a maintainer approves it with 2FA (npmjs.com "Staged Packages" tab or `npm stage approve <stage-id>`).
+- If publishing fails for a release, run the Release workflow manually with the existing tag (e.g. `v0.1.1`) to stage it again.
+- Manual edits to a release PR (e.g. changelog notes) are lost if anything else lands on `main` before it is merged, because release-please regenerates the PR.
