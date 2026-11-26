@@ -15,8 +15,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # 20 is the minimum supported version (`engines.node`), 24 is current.
-        node-version: ['20', '24']
+        # 22 is the minimum supported version (`engines.node`), 24 is current.
+        node-version: ['22', '24']
     steps:
       - uses: actions/checkout@v6
 

@@ -6,7 +6,7 @@ Config-driven style engine that converts typed style objects into atomic CSS cla
 
 - TypeScript (strict), **pnpm**
 - **Vite** library mode for the build (multi-entry: `index`, `cli`, `vite`), **Vitest** for tests
-- ESLint (`@atolye15/eslint-config`) + Prettier + `tsc` for linting
+- ESLint 10 (`@hsnaydd/eslint-config`) + Prettier + `tsc` (TypeScript 6) for linting
 - Runtime deps: `jiti` (config evaluation), `chokidar` (watch); `vite` is an optional peer
 
 ## Commands
@@ -22,12 +22,12 @@ pnpm build            # Vite library build → dist/
 
 These come from the approved refactor plan (`.claude/plans/standalone-refactor.md` — plans are working logs, kept local and gitignored; the durable decisions are distilled into this file):
 
-- **One key grammar** — `styleName-token[@bp]` — is the single contract between codegen and runtime. Class names are derived from it by a pure function in `src/shared/class-name.ts` (`hashed` or `readable` mode); there is no mapping module. `makeClassName` returns the *unescaped* class name (what goes into the `class` attribute); selectors escape it at codegen time.
+- **One key grammar** — `styleName-token[@bp]` — is the single contract between codegen and runtime. Class names are derived from it by a pure function in `src/shared/class-name.ts` (`hashed` or `readable` mode); there is no mapping module. `makeClassName` returns the _unescaped_ class name (what goes into the `class` attribute); selectors escape it at codegen time.
 - `src/shared/`, `src/config/`, `src/infer/`, `src/presets/`, `src/runtime/` must stay isomorphic (no Node built-ins/globals); Node-only code lives under `src/node/`, `src/cli.ts`, `src/vite.ts`. The tsconfig loads `node` types, so isomorphism is by convention — watch for it in review.
 - Types are inferred from the user config end-to-end (`defineConfig` → `createXStyle`); no type codegen. Never annotate configs with `XStyleUserConfig` (kills literals — documented pitfall, covered by a type test).
 - No arbitrary values: all CSS is pre-generated from the config; the runtime only assembles class names.
 - The hash wire format (djb2-xor → base36, 6 chars) is pinned by a test table in `class-name.test.ts`; changing it breaks every generated stylesheet.
-- `theme` omitted → the built-in `defaultTheme` (`src/config/default-theme.ts`); an explicit theme replaces it wholesale (spread `defaultTheme` to extend). `presets` omitted → `resolveConfig` injects `presetDefault({ theme })` built from that *effective* theme, `presets: []` opts out. Both fallbacks are mirrored at the type level by `ThemeOf`/`RulesOf` in `src/infer/resolve.ts` — value and type level must never diverge. Never index `C['theme']` directly (errors on theme-less configs); go through `ThemeOf<C>`.
+- `theme` omitted → the built-in `defaultTheme` (`src/config/default-theme.ts`); an explicit theme replaces it wholesale (spread `defaultTheme` to extend). `presets` omitted → `resolveConfig` injects `presetDefault({ theme })` built from that _effective_ theme, `presets: []` opts out. Both fallbacks are mirrored at the type level by `ThemeOf`/`RulesOf` in `src/infer/resolve.ts` — value and type level must never diverge. Never index `C['theme']` directly (errors on theme-less configs); go through `ThemeOf<C>`.
 
 ## Structure
 
