@@ -1,6 +1,6 @@
 {
   "name": "@hsnaydd/xstyle",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Config-driven style engine that converts typed style objects into atomic CSS classes.",
   "license": "MIT",
   "author": "Hasan Aydoğdu (https://github.com/hsnaydd)",
