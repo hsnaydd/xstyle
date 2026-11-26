@@ -27,7 +27,7 @@
   "type": "module",
   "packageManager": "pnpm@10.18.3",
   "engines": {
-    "node": ">=20.19"
+    "node": "^22.22.0 || >=24"
   },
   "bin": {
     "xstyle": "./bin/xstyle.mjs"

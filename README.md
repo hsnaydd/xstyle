@@ -24,6 +24,8 @@ One key grammar — `styleName-token[@breakpoint]` — is the single contract be
 pnpm add @hsnaydd/xstyle
 ```
 
+Requires Node.js `^22.22.0` or `>=24`.
+
 Create `xstyle.config.ts` in your project root. The smallest possible config
 uses the built-in `defaultTheme` (a neutral gray palette plus spacing, sizing
 and radius scales) as is:
