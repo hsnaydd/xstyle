@@ -57,17 +57,30 @@ export async function loadConfig(options: LoadConfigOptions = {}): Promise<Loade
   const cwd = options.cwd ?? process.cwd();
   const configPath = findConfigFile(cwd, options.configFile);
 
-  // A fresh jiti instance per load: watch mode never sees a stale module
-  // cache, and the instance's cache doubles as the list of files the config
-  // evaluated — that becomes the watch list.
-  const jiti = createJiti(import.meta.url, { interopDefault: true });
+  // The config path doubles as the parent URL; `import.meta.url` would become
+  // `undefined` in the CJS build.
+  const jiti = createJiti(configPath, { interopDefault: true });
 
+  // `jiti.cache` is Node's process-wide `require.cache`, shared by every jiti
+  // instance. The modules this load adds to it are the files the config
+  // evaluated, which becomes the watch list. The local ones are evicted
+  // afterwards so the next load (watch mode) evaluates them again.
+  const cachedBefore = new Set(Object.keys(jiti.cache));
+  let dependencies: string[];
   let config: unknown;
 
   try {
     config = await jiti.import(configPath, { default: true });
   } catch (error) {
     throw new Error(`Failed to load ${configPath}: ${(error as Error).message}`, { cause: error });
+  } finally {
+    dependencies = Object.keys(jiti.cache).filter(
+      (path) => !cachedBefore.has(path) && !path.includes('node_modules'),
+    );
+
+    for (const path of dependencies) {
+      delete jiti.cache[path];
+    }
   }
 
   if (typeof config !== 'object' || config === null) {
@@ -75,8 +88,6 @@ export async function loadConfig(options: LoadConfigOptions = {}): Promise<Loade
       `${configPath} must default-export an xstyle config object (see defineConfig).`,
     );
   }
-
-  const dependencies = Object.keys(jiti.cache).filter((path) => !path.includes('node_modules'));
 
   if (!dependencies.includes(configPath)) {
     dependencies.unshift(configPath);

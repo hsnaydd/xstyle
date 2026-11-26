@@ -1,4 +1,4 @@
-import { mkdtemp, rm } from 'node:fs/promises';
+import { mkdtemp, realpath, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -9,7 +9,8 @@ const fixturesDir = fileURLToPath(new URL('../../test/fixtures', import.meta.url
 const tempDirs: string[] = [];
 
 async function makeTempDir(): Promise<string> {
-  const dir = await mkdtemp(join(tmpdir(), 'xstyle-test-'));
+  // realpath: on macOS the temp dir is a symlink, jiti reports resolved paths.
+  const dir = await realpath(await mkdtemp(join(tmpdir(), 'xstyle-test-')));
 
   tempDirs.push(dir);
 
@@ -70,5 +71,54 @@ describe('loadConfig', () => {
 
     await expect(loadConfig({ cwd })).rejects.toThrow(/Failed to load .*xstyle\.config\.ts/);
     await expect(loadConfig({ cwd })).rejects.toThrow(/boom from broken config/);
+  });
+
+  // Watch mode loads the config again in the same process after every change.
+  it('picks up edits to the config and its local imports on the next load', async () => {
+    const cwd = await makeTempDir();
+    const configPath = join(cwd, 'xstyle.config.ts');
+    const themePath = join(cwd, 'theme.ts');
+
+    await writeFile(themePath, "export const space = { 4: '0.25rem' };\n");
+    await writeFile(
+      configPath,
+      "import { space } from './theme';\n\nexport default { classNames: 'readable', theme: { space } };\n",
+    );
+
+    const first = await loadConfig({ cwd });
+
+    expect(first.config.classNames).toBe('readable');
+    expect(first.config.theme?.space).toEqual({ 4: '0.25rem' });
+    expect(first.dependencies).toEqual(expect.arrayContaining([configPath, themePath]));
+
+    await writeFile(themePath, "export const space = { 4: '0.375rem' };\n");
+
+    const second = await loadConfig({ cwd });
+
+    expect(second.config.theme?.space).toEqual({ 4: '0.375rem' });
+    expect(second.dependencies).toEqual(expect.arrayContaining([configPath, themePath]));
+
+    await writeFile(
+      configPath,
+      "import { space } from './theme';\n\nexport default { classNames: 'hashed', theme: { space } };\n",
+    );
+
+    const third = await loadConfig({ cwd });
+
+    expect(third.config.classNames).toBe('hashed');
+  });
+
+  it('loads a fixed config after a failed load', async () => {
+    const cwd = await makeTempDir();
+    const configPath = join(cwd, 'xstyle.config.ts');
+
+    await writeFile(configPath, "throw new Error('broken');\n");
+    await expect(loadConfig({ cwd })).rejects.toThrow(/broken/);
+
+    await writeFile(configPath, "export default { classNames: 'readable' };\n");
+
+    const { config } = await loadConfig({ cwd });
+
+    expect(config.classNames).toBe('readable');
   });
 });
