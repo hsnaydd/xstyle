@@ -34,7 +34,7 @@ Commit all changes (staged and unstaged) following these rules:
   1. `git config sequence.editor "sed -i '' 's|^pick \(.*fixup!\)|fixup \1|'"`
   2. `git rebase -i --autosquash main`
   3. `git config --unset sequence.editor`
-  Never use `GIT_SEQUENCE_EDITOR=...` or `git -c sequence.editor=...` as they won't match permission patterns. Never use `--no-edit` with rebase.
+     Never use `GIT_SEQUENCE_EDITOR=...` or `git -c sequence.editor=...` as they won't match permission patterns. Never use `--no-edit` with rebase.
 - **Order commits so every commit in the history is valid** — tests and build must pass at each commit. Infrastructure changes (config, tooling, shared utilities) that other commits depend on must come before the commits that rely on them.
 - If a pre-commit hook fails, fix the issue and create a new commit.
 - Pass commit messages via HEREDOC:

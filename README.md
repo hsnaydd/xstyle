@@ -112,10 +112,9 @@ xstyle build -c ./path/to/xstyle.config.ts -o ./styles/xstyle.css
 
 Output precedence: `-o` flag → `output` in the config (resolved relative to the config file) → `./xstyle.generated.css`. Add the generated file to `.gitignore` and import it from a global entry point.
 
-**Next.js / Turbopack:** the Vite plugin cannot run inside the app build — use the CLI instead:
+**Next.js / Turbopack:** the Vite plugin cannot run inside the app build — use the CLI instead, from the `package.json` scripts:
 
-```jsonc
-// package.json
+```json
 {
   "scripts": {
     "predev": "xstyle build",
@@ -198,18 +197,18 @@ values: toNamedValues({ 4: '0.25rem', auto: 'auto' }); // [['4','0.25rem'], ['au
 
 `presetDefault({ theme, exclude?, excludeGroups? })` builds 70 rules from your theme's scales, organized into ten groups:
 
-| Group | Contents |
-| --- | --- |
-| `layout` | display, position, top/right/bottom/left, overflow…, object-fit, visibility |
-| `flexbox` | flex…, justify-content/-self, align-items/-self |
-| `grid` | grid-column |
-| `spacing` | margin…, padding…, gap… (from `theme.space`) |
-| `sizing` | width/height + min/max (from `theme.size`) |
-| `typography` | font…, text…, white-space, hyphens, list-style, vertical-align |
-| `colors` | color, background-color (from `theme.colors`) |
-| `borders` | border…, border-color, border-radius |
-| `effects` | box-shadow (from `theme.shadows`), rotate |
-| `interactivity` | cursor, pointer-events, user-select |
+| Group           | Contents                                                                    |
+| --------------- | --------------------------------------------------------------------------- |
+| `layout`        | display, position, top/right/bottom/left, overflow…, object-fit, visibility |
+| `flexbox`       | flex…, justify-content/-self, align-items/-self                             |
+| `grid`          | grid-column                                                                 |
+| `spacing`       | margin…, padding…, gap… (from `theme.space`)                                |
+| `sizing`        | width/height + min/max (from `theme.size`)                                  |
+| `typography`    | font…, text…, white-space, hyphens, list-style, vertical-align              |
+| `colors`        | color, background-color (from `theme.colors`)                               |
+| `borders`       | border…, border-color, border-radius                                        |
+| `effects`       | box-shadow (from `theme.shadows`), rotate                                   |
+| `interactivity` | cursor, pointer-events, user-select                                         |
 
 `excludeGroups` drops whole groups, `exclude` drops individual rules — both remove the rules from the generated CSS **and** from the inferred types. Note that `excludeGroups: ['flexbox']` also removes `justify-*`/`align-*`, which grid layouts use too. The full group → rules reference lives in [src/presets/default/README.md](src/presets/default/README.md).
 
@@ -220,10 +219,10 @@ Presets are plain data (`{ name, rules }`); calling the factory inside the confi
 ## Runtime semantics
 
 ```ts
-css({ display: 'flex' });                  // base class
-css({ '@md': { display: 'block' } });      // mobile-first: applies at md and up
-css({ display: isOpen && 'flex' });        // false / null / undefined are skipped
-css([base, override]);                     // later objects win per property
+css({ display: 'flex' }); // base class
+css({ '@md': { display: 'block' } }); // mobile-first: applies at md and up
+css({ display: isOpen && 'flex' }); // false / null / undefined are skipped
+css([base, override]); // later objects win per property
 ```
 
 When merging an array, breakpoint blocks merge per property too — they don't replace each other wholesale:
