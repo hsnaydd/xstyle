@@ -9,7 +9,8 @@
       "changelog-sections": [
         { "type": "feat", "section": "Features", "hidden": false },
         { "type": "fix", "section": "Bug Fixes", "hidden": false },
-        { "type": "refactor", "section": "Refactors", "hidden": false }
+        { "type": "refactor", "section": "Refactors", "hidden": false },
+        { "type": "build", "section": "Build System", "hidden": true }
       ]
     }
   }
