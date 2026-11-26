@@ -71,7 +71,7 @@
     "typescript": "^6.0.3",
     "unplugin-dts": "^1.1.2",
     "vite": "^8.4.0",
-    "vitest": "^4.1.10"
+    "vitest": "^5.1.2"
   },
   "dependencies": {
     "chokidar": "^5.0.0",
