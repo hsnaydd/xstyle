@@ -1,6 +1,6 @@
 # Changelog
 
-## [0.1.0](https://github.com/hsnaydd/xstyle/compare/xstyle-v0.0.1...xstyle-v0.1.0) (2026-07-30)
+## [0.1.0](https://github.com/hsnaydd/xstyle/compare/v0.0.1...v0.1.0) (2026-07-30)
 
 
 ### Features
