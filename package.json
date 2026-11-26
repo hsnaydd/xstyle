@@ -55,9 +55,8 @@
     "lint:eslint": "eslint 'src/**/*.{ts,tsx}'",
     "lint:ts": "tsc",
     "lint": "pnpm lint:eslint && pnpm lint:ts",
-    "format": "pnpm format:ts",
-    "format:ts": "prettier --write 'src/**/*.{ts,tsx}' && pnpm lint:eslint --fix",
-    "format:check": "prettier -c 'src/**/*.{ts,tsx}'",
+    "format": "prettier . --write && pnpm lint:eslint --fix",
+    "format:check": "prettier . --check",
     "test": "vitest run",
     "build": "vite build",
     "prepublishOnly": "pnpm build"
