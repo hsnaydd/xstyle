@@ -74,7 +74,7 @@
     "vitest": "^5.1.2"
   },
   "dependencies": {
-    "chokidar": "^5.0.0",
+    "chokidar": "^6.0.0",
     "jiti": "^2.7.0"
   },
   "peerDependencies": {
