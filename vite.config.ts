@@ -6,9 +6,9 @@ export default defineConfig({
   build: {
     lib: {
       entry: {
-        index: resolve(__dirname, 'src/index.ts'),
-        cli: resolve(__dirname, 'src/cli.ts'),
-        vite: resolve(__dirname, 'src/vite.ts'),
+        index: resolve(import.meta.dirname, 'src/index.ts'),
+        cli: resolve(import.meta.dirname, 'src/cli.ts'),
+        vite: resolve(import.meta.dirname, 'src/vite.ts'),
       },
       formats: ['es', 'cjs'],
       fileName: (format, entryName) => `${entryName}.${format === 'es' ? 'js' : 'cjs'}`,
