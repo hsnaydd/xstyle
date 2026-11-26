@@ -6,7 +6,7 @@ Config-driven style engine that converts typed style objects into atomic CSS cla
 
 - TypeScript (strict), **pnpm**
 - **Vite** library mode for the build (multi-entry: `index`, `cli`, `vite`), **Vitest** for tests
-- ESLint (`@atolye15/eslint-config`) + Prettier + `tsc` for linting
+- ESLint 10 (`@hsnaydd/eslint-config`) + Prettier + `tsc` (TypeScript 6) for linting
 - Runtime deps: `jiti` (config evaluation), `chokidar` (watch); `vite` is an optional peer
 
 ## Commands

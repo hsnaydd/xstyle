@@ -63,12 +63,12 @@
     "prepublishOnly": "pnpm build"
   },
   "devDependencies": {
-    "@atolye15/eslint-config": "^2.0.0",
+    "@hsnaydd/eslint-config": "^3.0.0",
     "@microsoft/api-extractor": "^7.58.9",
     "@types/node": "^26.1.1",
-    "eslint": "^9.39.1",
+    "eslint": "^10.15.0",
     "prettier": "^3.9.4",
-    "typescript": "^5.9.3",
+    "typescript": "^6.0.3",
     "unplugin-dts": "^1.0.3",
     "vite": "^8.1.4",
     "vitest": "^4.1.10"
